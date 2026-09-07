@@ -1,6 +1,0 @@
-{
-  "name": "ReplayDB",
-  "description": "A temporal/debugging-oriented database platform that lets you rewind and inspect database history.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
