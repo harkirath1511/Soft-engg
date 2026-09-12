@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: replaydb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: replay_admin
+      POSTGRES_PASSWORD: replay_password_secure
+      POSTGRES_DB: replaydb
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/triggers:/opt/replaydb/triggers
+      - ./database/sample-data:/opt/replaydb/sample-data
+      - pgdata:/var/lib/postgresql/data
+    command: >
+      postgres
+        -c track_commit_timestamp=on
+        -c wal_level=logical
+        -c log_destination=stderr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U replay_admin -d replaydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
