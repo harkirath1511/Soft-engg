@@ -1,0 +1,80 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ReplayDB Temporal Forensics REST API",
+    "version": "1.0.0",
+    "description": "REST endpoints for event querying, deterministic state reconstruction, transaction blast-radius analysis, and counterfactual branching."
+  },
+  "paths": {
+    "/api/v1/management/tables": {
+      "get": {
+        "summary": "List monitored tables and event statistics",
+        "responses": {
+          "200": { "description": "Array of MonitoredTableInfo" }
+        }
+      }
+    },
+    "/api/v1/management/tables/{tableName}/attach": {
+      "post": {
+        "summary": "Attach capture triggers to target table",
+        "parameters": [{ "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }]
+      }
+    },
+    "/api/v1/management/tables/{tableName}/detach": {
+      "delete": {
+        "summary": "Detach capture triggers from target table",
+        "parameters": [{ "name": "tableName", "in": "path", "required": true, "schema": { "type": "string" } }]
+      }
+    },
+    "/api/v1/history/events": {
+      "get": {
+        "summary": "Query event log with filtering and pagination",
+        "parameters": [
+          { "name": "table", "in": "query", "schema": { "type": "string" } },
+          { "name": "recordPk", "in": "query", "schema": { "type": "string" } },
+          { "name": "txId", "in": "query", "schema": { "type": "string" } },
+          { "name": "from", "in": "query", "schema": { "type": "string" } },
+          { "name": "to", "in": "query", "schema": { "type": "string" } }
+        ]
+      }
+    },
+    "/api/v1/history/records/{tableName}/{recordPk}": {
+      "get": {
+        "summary": "Get full chronological lifecycle of a record"
+      }
+    },
+    "/api/v1/history/records/{tableName}/{recordPk}/diff": {
+      "get": {
+        "summary": "Get field-level deep diff between two events"
+      }
+    },
+    "/api/v1/replay/records/{tableName}/{recordPk}": {
+      "get": {
+        "summary": "Reconstruct exact JSON state of record at timestamp T",
+        "parameters": [{ "name": "asOf", "in": "query", "schema": { "type": "string" } }]
+      }
+    },
+    "/api/v1/replay/tables/{tableName}": {
+      "get": {
+        "summary": "Reconstruct full table state at timestamp T"
+      }
+    },
+    "/api/v1/transactions/{txId}": {
+      "get": {
+        "summary": "Get multi-table mutations within a single transaction boundary"
+      }
+    },
+    "/api/v1/transactions/correlate": {
+      "get": {
+        "summary": "Correlate transactions within a temporal window"
+      }
+    },
+    "/api/v1/branches": {
+      "get": { "summary": "List counterfactual branches" },
+      "post": { "summary": "Create counterfactual branch omitting transactions" }
+    },
+    "/api/v1/branches/{branchId}/state/{tableName}": {
+      "get": { "summary": "Reconstruct table/record state in counterfactual branch" }
+    }
+  }
+}
